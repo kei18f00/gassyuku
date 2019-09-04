@@ -1,0 +1,20 @@
+<a id="download">Download</a>
+<script>
+  const downloadLink = document.getElementById('download');
+  var handleSuccess = function(stream) {
+    const options = {mimeType: 'video/webm'};
+    const recordedChunks = [];
+    const mediaRecorder = new MediaRecorder(stream, options);
+    mediaRecorder.ondataavailable = (e) => {
+      recordedChunks.push(e.data);
+    };
+    mediaRecorder.onstop = (e) => {
+      downloadLink.href = URL.createObjectURL(new Blob(recordedChunks));
+      downloadLink.download = 'video.webm';
+    };
+    mediaRecorder.start();
+  };
+  navigator.mediaDevices.getUserMedia({ audio: true, video: true })
+      .then(handleSuccess);
+</script>
+<script src="editor.js"></script>
