@@ -47,7 +47,9 @@ input{
     font-size:20px;
 }
 .btn-gradient-radius {
+    text-align: center;
     display: block;
+    margin: 0 auto;
     padding: 15px 30px;
     border-radius: 25px;
     text-decoration: none;
