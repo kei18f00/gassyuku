@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ja">
+<!-- CSS -->
+<head>
+    <script src="./editor.js"></script>
+    <script>
+      const { ipcRenderer } = window.require('electron'); 
+      
+      function OnButtonClick(){
+        const senddata = {
+          dayOfweek: document.getElementById("dayOfweek").value,
+          hour: document.getElementById("hour").value,
+          minute: document.getElementById("minute").value,
+          second: document.getElementById("second").value,
+          closedayOfweek: document.getElementById("closedayOfweek").value,
+          closehour: document.getElementById("closehour").value,
+          closeminute: document.getElementById("closeminute").value,
+          closesecond: document.getElementById("closesecond").value,
+          URL: document.getElementById("URL").value,
+        }
+        ipcRenderer.send('set', senddata)
+      }
+      const downloadLink = document.getElementById('download');
+      var handleSuccess = function(stream) {
+        const options = {mimeType: 'video/webm'};
+        const recordedChunks = [];
+        const mediaRecorder = new MediaRecorder(stream, options);
+        mediaRecorder.ondataavailable = (e) => {
+          recordedChunks.push(e.data);
+        };
+        mediaRecorder.onstop = (e) => {
+          downloadLink.href = URL.createObjectURL(new Blob(recordedChunks));
+          downloadLink.download = 'video.webm';
+        };
+        mediaRecorder.start();
+      };
+      navigator.mediaDevices.getUserMedia({ audio: true, video: true })
+          .then(handleSuccess);
+    </script>
+  <meta charset="UTF-8">
+  <title>ネットラジオレコーダ_コントローラ(未完成)</title>
+  <link type="text/css" rel="stylesheet" href="./main.css">
+</head>
+
+<body>  
+  <div class="input-form">
+      <div>URL</div>
+      <input value="https://www.nhk.or.jp/radio/player/?ch=r1" id="URL"> 
+    <h1 class="section-title">開始時間</h1>
+      <div>Day</div>
+      <input id="dayOfweek">
+      <div >Hour</div>
+      <input id="hour">
+      <div >Minutes</div>
+      <input id="minute">
+      <div >Seconds</div>
+      <input id="second" >
+
+      <h1 class="section-title">終了時間</h1>
+      <div>Day</div>
+      <input  id="closedayOfweek">
+      <div >Hour</div>
+      <input id="closehour">
+      <div >Minutes</div>
+      <input id="closeminute">
+      <div >Seconds</div>
+      <input id="closesecond" >
+      <a onclick="OnButtonClick()" href="#" class="btn-gradient-radius">設定</a>
+    </div>
+
+</body>
+<script>
+    document.getElementById("dayOfweek").value = new Date().getDay() -1;
+    document.getElementById("hour").value = new Date().getHours();
+    document.getElementById("minute").value = new Date().getMinutes();
+    document.getElementById("second").value = new Date().getSeconds();
+    document.getElementById("closedayOfweek").value = new Date().getDay() -1;
+    document.getElementById("closehour").value = new Date().getHours();
+    document.getElementById("closeminute").value = new Date().getMinutes();
+    document.getElementById("closesecond").value = new Date().getSeconds();
+</script>
+</html>
